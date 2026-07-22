@@ -1,0 +1,80 @@
+{
+  "_SYNTHETIC_DATA_NOTICE": "*** THIS FILE IS 100% SYNTHETIC / FABRICATED DATA ***. It was hand-authored for a Claude Code multi-source investigation training exercise (complex-analysis repo). It is NOT real Azure AD telemetry, does NOT come from any real tenant, and does NOT represent any real user, organization, or incident. All IDs, GUIDs, and identities are invented. It is designed to plausibly follow on from the synthetic sign-in in ./azuread_signin_synthetic.json and the real public endpoint samples in ../windows/ (see ../windows/README.md). Do not treat any value in this file as a genuine indicator of compromise.",
+  "schema_note": "Shape approximates the Azure AD (Microsoft Entra ID) directory audit log schema as exposed via Microsoft Graph /auditLogs/directoryAudits and the Azure Monitor AuditLogs table, trimmed to fields relevant to this exercise.",
+  "auditLogs": [
+    {
+      "id": "7a4b2c1d-0001-4e22-9f3b-000000000101",
+      "category": "AuthenticationMethods",
+      "activityDisplayName": "User registered security info",
+      "activityDateTime": "2026-01-18T11:24:10.0000000Z",
+      "loggedByService": "Authentication Methods",
+      "operationType": "Update",
+      "result": "success",
+      "resultReason": "",
+      "correlationId": "5f3a1b2c-0002-4a11-9e2a-000000000002",
+      "initiatedBy": {
+        "user": {
+          "id": "a1b2c3d4-e5f6-4711-8899-aabbccddeeff",
+          "userPrincipalName": "user01@example.corp",
+          "displayName": "User Zero One",
+          "ipAddress": "10.0.2.19"
+        }
+      },
+      "targetResources": [
+        {
+          "id": "a1b2c3d4-e5f6-4711-8899-aabbccddeeff",
+          "displayName": "user01@example.corp",
+          "type": "User",
+          "modifiedProperties": [
+            {
+              "displayName": "StrongAuthenticationPhoneAppDetail",
+              "oldValue": "null",
+              "newValue": "[{\"PhoneNumber\":\"+1 555-0142\",\"DeviceTag\":\"SW\"}]"
+            }
+          ]
+        }
+      ],
+      "additionalDetails": [
+        { "key": "AuthenticationMethod", "value": "Phone (SMS/Voice)" }
+      ],
+      "note": "ANOMALOUS: a new MFA phone number is registered for user01 ~5 minutes after the anomalous legacy-auth sign-in in ./azuread_signin_synthetic.json, from the same correlationId and ipAddress (10.0.2.19). Classic post-compromise persistence step -- registering attacker-controlled MFA so the attacker can satisfy future MFA challenges / reset the password via SSPR without the legitimate user noticing."
+    },
+    {
+      "id": "7a4b2c1d-0002-4e22-9f3b-000000000102",
+      "category": "UserManagement",
+      "activityDisplayName": "Update user",
+      "activityDateTime": "2026-01-18T11:26:33.0000000Z",
+      "loggedByService": "Core Directory",
+      "operationType": "Update",
+      "result": "success",
+      "resultReason": "",
+      "correlationId": "5f3a1b2c-0003-4a11-9e2a-000000000003",
+      "initiatedBy": {
+        "user": {
+          "id": "a1b2c3d4-e5f6-4711-8899-aabbccddeeff",
+          "userPrincipalName": "user01@example.corp",
+          "displayName": "User Zero One",
+          "ipAddress": "10.0.2.19"
+        }
+      },
+      "targetResources": [
+        {
+          "id": "a1b2c3d4-e5f6-4711-8899-aabbccddeeff",
+          "displayName": "user01@example.corp",
+          "type": "User",
+          "modifiedProperties": [
+            {
+              "displayName": "InboxRule",
+              "oldValue": "null",
+              "newValue": "{\"Name\":\"...\",\"AlwaysDeleteOutlookRuleBlob\":false,\"ForwardTo\":\"external-relay@mail-example-corp-support.com\",\"StopProcessingRules\":true}"
+            }
+          ]
+        }
+      ],
+      "additionalDetails": [
+        { "key": "NotificationType", "value": "AdminInitiated" }
+      ],
+      "note": "ANOMALOUS: a hidden mailbox forwarding rule to an external, lookalike domain (mail-example-corp-support.com) is added minutes later, from the same IP -- a common BEC follow-on step for silently exfiltrating mail after account takeover."
+    }
+  ]
+}

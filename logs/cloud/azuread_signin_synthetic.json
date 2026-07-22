@@ -1,0 +1,64 @@
+{
+  "_SYNTHETIC_DATA_NOTICE": "*** THIS FILE IS 100% SYNTHETIC / FABRICATED DATA ***. It was hand-authored for a Claude Code multi-source investigation training exercise (complex-analysis repo). It is NOT real Azure AD telemetry, does NOT come from any real tenant, and does NOT represent any real user, organization, or incident. All IDs, GUIDs, IPs, and identities are invented. It was designed to plausibly correlate (same username, adjoining timeline, shared IP) with the real public Sysmon/Security sample event logs vendored in ../windows/ (see ../windows/README.md for the correlation narrative). Do not treat any value in this file as a genuine indicator of compromise.",
+  "schema_note": "Shape approximates the Azure AD (Microsoft Entra ID) sign-in log schema as exposed via Microsoft Graph /auditLogs/signIns and the Azure Monitor SigninLogs table, trimmed to fields relevant to this exercise.",
+  "signIns": [
+    {
+      "id": "5f3a1b2c-0001-4a11-9e2a-000000000001",
+      "createdDateTime": "2026-01-11T08:14:02.0000000Z",
+      "userDisplayName": "User Zero One",
+      "userPrincipalName": "user01@example.corp",
+      "userId": "a1b2c3d4-e5f6-4711-8899-aabbccddeeff",
+      "appId": "00000002-0000-0ff1-ce00-000000000000",
+      "appDisplayName": "Office 365 Exchange Online",
+      "resourceDisplayName": "Office 365 Exchange Online",
+      "ipAddress": "51.140.22.9",
+      "clientAppUsed": "Mobile Apps and Desktop clients",
+      "isInteractive": true,
+      "conditionalAccessStatus": "success",
+      "riskLevelDuringSignIn": "none",
+      "riskState": "none",
+      "status": { "errorCode": 0, "additionalDetails": "MFA satisfied by claim in the token" },
+      "deviceDetail": {
+        "deviceId": "b2c3d4e5-f607-4812-9900-bbccddeeff00",
+        "displayName": "USER01-LAPTOP",
+        "operatingSystem": "Windows",
+        "browser": "Edge 120",
+        "isCompliant": true,
+        "isManaged": true,
+        "trustType": "Azure AD joined"
+      },
+      "location": { "city": "Manchester", "state": "England", "countryOrRegion": "GB" },
+      "note": "Baseline: normal, expected sign-in from user01's usual corporate device/location the week prior. Included for contrast with the anomalous sign-in below."
+    },
+    {
+      "id": "5f3a1b2c-0002-4a11-9e2a-000000000002",
+      "createdDateTime": "2026-01-18T11:19:47.0000000Z",
+      "userDisplayName": "User Zero One",
+      "userPrincipalName": "user01@example.corp",
+      "userId": "a1b2c3d4-e5f6-4711-8899-aabbccddeeff",
+      "appId": "00000002-0000-0ff1-ce00-000000000000",
+      "appDisplayName": "Office 365 Exchange Online",
+      "resourceDisplayName": "Office 365 Exchange Online",
+      "ipAddress": "10.0.2.19",
+      "clientAppUsed": "Other clients; IMAP4",
+      "isInteractive": false,
+      "conditionalAccessStatus": "success",
+      "riskLevelDuringSignIn": "high",
+      "riskState": "atRisk",
+      "riskDetail": "unfamiliarFeatures",
+      "riskEventTypes": ["unfamiliarLocation", "anonymizedIPAddress"],
+      "status": { "errorCode": 0, "additionalDetails": "Legacy authentication protocol; no interactive MFA challenge presented" },
+      "deviceDetail": {
+        "deviceId": "",
+        "displayName": "",
+        "operatingSystem": "Unknown",
+        "browser": "BAV2ROPC",
+        "isCompliant": false,
+        "isManaged": false,
+        "trustType": ""
+      },
+      "location": { "city": "Unknown", "state": "Unknown", "countryOrRegion": "ZZ" },
+      "note": "ANOMALOUS: legacy/basic-auth (IMAP) sign-in for user01, ~13 minutes after the on-prem pass-the-hash logon recorded in ../windows/LM_4624_mimikatz_sekurlsa_pth_source_machine.evtx (2019-03-18 11:06:29 UTC in the original sample; re-dated here to align with this exercise's synthetic timeline). No interactive MFA prompt because legacy protocols bypass Conditional Access MFA enforcement -- consistent with reuse of a harvested credential against a cloud-facing legacy auth endpoint. ipAddress 10.0.2.19 intentionally matches the attacker-side IP seen initiating the SMB/wmiexec connection in ../windows/LM_wmiexec_impacket_sysmon_whoami.evtx, to give the exercise a shared IOC across cloud and endpoint logs (note: a private/RFC1918 address would not normally appear in a real Azure AD sign-in log, which records the public source IP -- it is used here purely as a deliberate synthetic correlation hook, not for technical realism)."
+    }
+  ]
+}
